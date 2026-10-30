@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AinetIcon from "../components/AinetIcon";
 import ContactWidget from "../components/ContactWidget";
 import Header from "../components/Header";
@@ -7,10 +8,11 @@ import { colorFor, pathFor, type Page } from "../routes";
 
 export default function PlaceholderPage({ lang, page }: { lang: Lang; page: Page }) {
   const d = dict[lang];
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="page">
       <TopBar lang={lang} current={page} />
-      <Header lang={lang} d={d} />
+      <Header lang={lang} d={d} menuOpen={menuOpen} onMenu={setMenuOpen} />
       <main className="placeholder">
         <AinetIcon size={96} accent={colorFor[page]} />
         <h1>AINET {page === "healthcare" ? "Healthcare" : "Hospitality"}</h1>
@@ -21,7 +23,7 @@ export default function PlaceholderPage({ lang, page }: { lang: Lang; page: Page
           {lang === "en" ? "Back to AINET Group" : "Volver a AINET Group"}
         </a>
       </main>
-      <ContactWidget d={d} />
+      <ContactWidget d={d} hidden={menuOpen} />
     </div>
   );
 }

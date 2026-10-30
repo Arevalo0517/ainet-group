@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AinetIcon from "../components/AinetIcon";
 import ContactWidget from "../components/ContactWidget";
 import Header from "../components/Header";
@@ -43,6 +43,15 @@ function SectionHead({
 function Hero({ d }: { d: Dict }) {
   const [sel, setSel] = useState(0);
   const p = d.problems[sel];
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // keep the selected chip centred in the mobile scroll row
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 639px)").matches) return;
+    const el = rowRef.current?.children[sel] as HTMLElement | undefined;
+    el?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [sel]);
+
   return (
     <section className="hero" id="inicio">
       <NetBackground />
@@ -52,10 +61,11 @@ function Hero({ d }: { d: Dict }) {
           {d.hero.h1a} <span className="accent">{d.hero.h1b}</span>
         </h1>
         <p className="price-pill">{d.hero.price}</p>
-        <p className="prompt" id="problema">
-          {d.hero.prompt}
-        </p>
-        <div className="chips" role="group" aria-label={d.hero.prompt}>
+        <div id="problema" className="prompts">
+          <p className="prompt">{d.hero.prompt}</p>
+          <p className="prompt prompt-m">{d.hero.promptShort}</p>
+        </div>
+        <div className="chips" role="group" aria-label={d.hero.prompt} ref={rowRef}>
           {d.problems.map((item, i) => (
             <button
               key={item.label}
@@ -68,6 +78,7 @@ function Hero({ d }: { d: Dict }) {
             </button>
           ))}
         </div>
+
         <div className="cards3">
           <article className="card card--before">
             <p className="card-eyebrow">{d.hero.cardBefore}</p>
@@ -98,10 +109,35 @@ function Hero({ d }: { d: Dict }) {
             <p className="meta">{p.meta}</p>
           </article>
         </div>
+
+        <div className="hero-card-m" key={sel}>
+          <p className="card-eyebrow">{d.hero.cardChat}</p>
+          {p.cliente && <p className="bubble bubble--in">{p.cliente}</p>}
+          <p className="bubble bubble--out">{p.respuesta}</p>
+          <p className="meta">{p.meta}</p>
+          <p className="card-eyebrow card-eyebrow--ok">{d.hero.cardAfter}</p>
+          <ul className="items">
+            {p.ahora.map((t) => (
+              <li key={t}>
+                <span className="mark mark--ok">✓</span>
+                {t}
+              </li>
+            ))}
+          </ul>
+          <p className="strike">
+            {p.antes.map((t, i) => (
+              <span key={t}>
+                <s>{t}</s>
+                {i < p.antes.length - 1 ? " · " : ""}
+              </span>
+            ))}
+          </p>
+        </div>
+
         <p className="hero-foot">
           {d.hero.noMatch} <strong>{d.hero.noMatchB}</strong>
         </p>
-        <a className="btn btn--accent" href="#contacto">
+        <a className="btn btn--accent hero-cta" href="#contacto">
           {d.hero.cta}
         </a>
       </div>
@@ -129,6 +165,7 @@ function ConnectMap({ d }: { d: Dict }) {
               </div>
             ))}
           </div>
+          <span className="vwire vwire--m" aria-hidden="true" />
           <div className="map-center">
             <div className="node-wrap">
               <span className="ring" />
@@ -139,6 +176,7 @@ function ConnectMap({ d }: { d: Dict }) {
               <span className="brand-ai">AI</span>NET
             </span>
           </div>
+          <span className="vwire vwire--m" aria-hidden="true" />
           <div className="map-col">
             <p className="map-label">{d.connect.toolsLabel}</p>
             {d.connect.tools.map((c) => (
@@ -150,7 +188,7 @@ function ConnectMap({ d }: { d: Dict }) {
           </div>
         </div>
         <div className="map-foot">
-          <span className="vwire" />
+          <span className="vwire" aria-hidden="true" />
           <span className="any-system">{d.connect.anySystem}</span>
           <span className="muted">{d.connect.noSystem}</span>
         </div>
@@ -165,11 +203,7 @@ function IndustryTabs({ d }: { d: Dict }) {
   return (
     <section className="section" id="industria">
       <div className="container">
-        <SectionHead
-          eyebrow={d.industry.eyebrow}
-          h2a={d.industry.h2}
-          accent={item.color}
-        />
+        <SectionHead eyebrow={d.industry.eyebrow} h2a={d.industry.h2} accent={item.color} />
         <div className="tabs" role="tablist" aria-label={d.industry.eyebrow}>
           {d.industry.tabs.map((t, i) => (
             <button
@@ -190,21 +224,10 @@ function IndustryTabs({ d }: { d: Dict }) {
           ))}
         </div>
         <div className="ind-panel" style={{ ["--accent" as string]: item.color }} role="tabpanel">
-          <div className="ind-left">
-            <p className="ind-title">
-              AINET <span className="accent">{item.name}</span>
-            </p>
-            <p className="ind-desc">{item.desc}</p>
-            <ul className="bullets">
-              {item.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-            <a className="btn btn--accent" href={item.href}>
-              {item.cta} →
-            </a>
-            <p className="handle">{item.handle}</p>
-          </div>
+          <p className="ind-title">
+            AINET <span className="accent">{item.name}</span>
+          </p>
+          <p className="ind-desc">{item.desc}</p>
           <div className="ind-chat">
             {item.chat.map((line, i) => (
               <p key={line} className={i % 2 === 0 ? "bubble bubble--in" : "bubble bubble--out"}>
@@ -213,6 +236,15 @@ function IndustryTabs({ d }: { d: Dict }) {
             ))}
             <p className="meta">{d.industry.autoReply}</p>
           </div>
+          <ul className="bullets">
+            {item.bullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+          <a className="btn btn--accent ind-cta" href={item.href}>
+            {item.cta} →
+          </a>
+          <p className="handle">{item.handle}</p>
         </div>
       </div>
     </section>
@@ -226,47 +258,53 @@ function AutomationBuilder({ d }: { d: Dict }) {
     <section className="section section--alt" id="arma">
       <div className="container">
         <SectionHead eyebrow={d.builder.eyebrow} h2a={d.builder.h2} p={d.builder.p} />
-        <div className="builder">
-          <div>
-            <p className="opt-label">{d.builder.when}</p>
-            {d.builder.triggers.map((tr, i) => (
-              <button
-                key={tr}
-                type="button"
-                className={i === t ? "opt opt--on" : "opt"}
-                aria-pressed={i === t}
-                onClick={() => setT(i)}
-              >
-                {d.builder.whenPrefix}
-                {tr}
-              </button>
-            ))}
+        <div className="builder-wrap">
+          <div className="builder">
+            <div className="builder-col">
+              <p className="opt-label">{d.builder.when}</p>
+              <div className="opt-row">
+                {d.builder.triggers.map((tr, i) => (
+                  <button
+                    key={tr}
+                    type="button"
+                    className={i === t ? "opt opt--on" : "opt"}
+                    aria-pressed={i === t}
+                    onClick={() => setT(i)}
+                  >
+                    {d.builder.whenPrefix}
+                    {tr}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="builder-col">
+              <p className="opt-label">{d.builder.then}</p>
+              <div className="opt-row">
+                {d.builder.actions.map((ac, i) => (
+                  <button
+                    key={ac}
+                    type="button"
+                    className={i === a ? "opt opt--on" : "opt"}
+                    aria-pressed={i === a}
+                    onClick={() => setA(i)}
+                  >
+                    {ac}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="opt-label">{d.builder.then}</p>
-            {d.builder.actions.map((ac, i) => (
-              <button
-                key={ac}
-                type="button"
-                className={i === a ? "opt opt--on" : "opt"}
-                aria-pressed={i === a}
-                onClick={() => setA(i)}
-              >
-                {ac}
-              </button>
-            ))}
+          <div className="result">
+            <p className="card-eyebrow">{d.builder.resultEyebrow}</p>
+            <p className="result-line">
+              {d.builder.resultPrefix}
+              <span className="accent">{d.builder.triggers[t]}</span>
+              {d.builder.resultMid}
+              <span className="accent">{d.builder.actions[a]}</span>
+              {d.builder.resultSuffix}
+            </p>
+            <p className="small">{d.builder.small}</p>
           </div>
-        </div>
-        <div className="result">
-          <p className="card-eyebrow">{d.builder.resultEyebrow}</p>
-          <p className="result-line">
-            {d.builder.resultPrefix}
-            <span className="accent">{d.builder.triggers[t]}</span>
-            {d.builder.resultMid}
-            <span className="accent">{d.builder.actions[a]}</span>
-            {d.builder.resultSuffix}
-          </p>
-          <p className="small">{d.builder.small}</p>
         </div>
       </div>
     </section>
@@ -274,15 +312,31 @@ function AutomationBuilder({ d }: { d: Dict }) {
 }
 
 function ValueCards({ d }: { d: Dict }) {
+  const [dot, setDot] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const onScroll = () => {
+    const el = ref.current;
+    const card = el?.querySelector<HTMLElement>(".value");
+    if (!el || !card) return;
+    const step = card.offsetWidth + 12;
+    setDot(Math.min(d.values.length - 1, Math.round(el.scrollLeft / step)));
+  };
   return (
     <section className="section">
-      <div className="container values">
-        {d.values.map((v) => (
-          <article className="value" key={v.title}>
-            <h3>{v.title}</h3>
-            <p>{v.text}</p>
-          </article>
-        ))}
+      <div className="container">
+        <div className="values" ref={ref} onScroll={onScroll}>
+          {d.values.map((v) => (
+            <article className="value" key={v.title}>
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </article>
+          ))}
+        </div>
+        <div className="dots" aria-hidden="true">
+          {d.values.map((v, i) => (
+            <span key={v.title} className={i === dot ? "dot-i dot-i--on" : "dot-i"} />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -379,10 +433,11 @@ function Footer({ d }: { d: Dict }) {
 
 export default function GroupPage({ lang }: { lang: Lang }) {
   const d = dict[lang];
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="page">
       <TopBar lang={lang} current="group" />
-      <Header lang={lang} d={d} />
+      <Header lang={lang} d={d} menuOpen={menuOpen} onMenu={setMenuOpen} />
       <main>
         <Hero d={d} />
         <ConnectMap d={d} />
@@ -393,7 +448,7 @@ export default function GroupPage({ lang }: { lang: Lang }) {
         <Contact d={d} />
       </main>
       <Footer d={d} />
-      <ContactWidget d={d} />
+      <ContactWidget d={d} hidden={menuOpen} />
     </div>
   );
 }

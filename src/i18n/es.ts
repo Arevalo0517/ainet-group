@@ -10,6 +10,9 @@ export const es = {
     integrations: "Conexiones",
     build: "Arma tu automatización",
     cta: "Cuéntanos tu problema",
+    ctaShort: "Contáctanos",
+    menu: "Menú",
+    close: "Cerrar",
   },
   hero: {
     eyebrow: "AI SOLUTIONS FOR BUSINESS",
@@ -17,6 +20,7 @@ export const es = {
     h1b: "Y si no existe, la creamos.",
     price: "Desde $1,500 MXN al mes",
     prompt: "¿Qué te quita más tiempo hoy? Elige uno y mira cómo se resuelve.",
+    promptShort: "¿Qué te quita más tiempo hoy?",
     cta: "Cuéntanos tu problema",
     noMatch: "¿Tu problema no está aquí?",
     noMatchB: "Si no existe la solución, la creamos.",
@@ -285,6 +289,7 @@ export const es = {
     close: "Cerrar ✕",
     subtitle: "Asesoría para tu negocio",
     greet: "¡Hola! 👋 ¿Qué te quita más tiempo en tu negocio?",
+    help: "¿Te ayudamos? 👋",
     chips: [
       { label: "Contestar mensajes", reply: "Eso lo resolvemos en automático, a cualquier hora." },
       {

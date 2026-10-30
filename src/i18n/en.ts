@@ -12,6 +12,9 @@ export const en: Dict = {
     integrations: "Integrations",
     build: "Build your automation",
     cta: "Tell us your problem",
+    ctaShort: "Contact us",
+    menu: "Menu",
+    close: "Close",
   },
   hero: {
     eyebrow: "AI SOLUTIONS FOR BUSINESS",
@@ -19,6 +22,7 @@ export const en: Dict = {
     h1b: "If not, we build it.",
     price: "From $100 USD a month",
     prompt: "What takes up most of your time today? Pick one and see how it gets solved.",
+    promptShort: "What takes up most of your time today?",
     cta: "Tell us your problem",
     noMatch: "Don’t see your problem here?",
     noMatchB: "If the solution doesn’t exist, we build it.",
@@ -299,6 +303,7 @@ export const en: Dict = {
     close: "Close ✕",
     subtitle: "Advice for your business",
     greet: "Hi! 👋 What takes up most of your time at work?",
+    help: "Need help? 👋",
     chips: [
       { label: "Answering messages", reply: "We handle that automatically, any time of day." },
       {

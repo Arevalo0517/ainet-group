@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Lang } from "../i18n";
 import { colorFor, pages, pathFor, type Page } from "../routes";
 
 export default function TopBar({ lang, current }: { lang: Lang; current: Page }) {
+  const [open, setOpen] = useState(false);
+  const currentPage = pages.find((p) => p.key === current)!;
+
   return (
     <div className="topbar">
       <div className="topbar-inner">
@@ -27,6 +31,40 @@ export default function TopBar({ lang, current }: { lang: Lang; current: Page })
             );
           })}
         </nav>
+
+        <div className="page-switch">
+          <button
+            type="button"
+            className="psw-btn"
+            aria-expanded={open}
+            aria-haspopup="true"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="dot" style={{ background: colorFor[current] }} aria-hidden="true" />
+            {currentPage.label}
+            <span className="psw-caret" aria-hidden="true">
+              ▾
+            </span>
+          </button>
+          {open && (
+            <ul className="psw-menu">
+              {pages.map((p) => (
+                <li key={p.key}>
+                  <Link
+                    to={pathFor(lang, p.key)}
+                    onClick={() => setOpen(false)}
+                    aria-current={p.key === current ? "page" : undefined}
+                  >
+                    <span className="dot" style={{ background: colorFor[p.key] }} aria-hidden="true" />
+                    {p.label}
+                    {p.key === current && <span className="psw-check">✓</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <div className="langtoggle" role="group" aria-label="Language">
           <Link
             to={pathFor("es", current)}
